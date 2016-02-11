@@ -2,8 +2,10 @@
 #include <string.h>
 #include <stdlib.h>
 
-char DIR[100] = "C:\\Users\\Xhulio\\Desktop\\det\\";
+char DIR[100] = "C:\\Users\\Xhulio\\Desktop\\det\\"; // Files directory
 int charCounter[256] = {0}; // ASCII 8 bit
+int tmpCharCounter[256] = {0};
+int indexMapper[256] = {0}; // Table used to store indexes of sorted array ex: t[0] = 2 (Index of max number in charCounterArray)
 
 int main(int argc, char const *argv[]) {
   if (argv[1] == NULL || argv[2] == NULL) {
@@ -25,6 +27,8 @@ int main(int argc, char const *argv[]) {
           processFile(file);
       }
       if (i == max) {
+        // Last file
+        sortDesc();
         prinfCharCounters();
       }
     }
@@ -33,16 +37,49 @@ int main(int argc, char const *argv[]) {
 }
 
 /**
-* Count characte
+* Count character
 */
 void processFile(FILE *file) {
   char currentChar;
   char toLowerChar;
   while((currentChar = fgetc(file)) != EOF) {
-    if (currentChar != '\n' && !isspace(currentChar)) {
+    if (currentChar != '\n' && !isspace(currentChar)) { // Ignore newline and whitespaces
       charCounter[(int) tolower(currentChar)]++;
     }
   }
+}
+
+/**
+ * Sort array desc by mapping indexes in indexMapper arrray
+ */
+void sortDesc() {
+  int j;
+  for (j=0; j<256; j++) {
+    tmpCharCounter[j] = charCounter[j];
+  }
+  int indexOfMax;
+  int i;
+  for (i=0; i<256; i++) {
+    indexOfMax = getIndexOfMaxAndDeleteMax(tmpCharCounter, 256);
+    indexMapper[i] = indexOfMax;
+  }
+}
+
+/**
+ * Returns index of max number and deletes number from array;
+ */
+int getIndexOfMaxAndDeleteMax(int t[], int n) {
+  int i;
+  int max = -1;
+  int maxIndex = -1;
+  for (i=0; i<n-1; i++) {
+    if (t[i] >= max) {
+      max = t[i];
+      maxIndex = i;
+    }
+  }
+  t[maxIndex] = -1;
+  return maxIndex;
 }
 
 /**
@@ -50,9 +87,11 @@ void processFile(FILE *file) {
 */
 void prinfCharCounters() {
   int i=0;
+  int mappedIndex;
   for(i; i<256; i++) {
-    if (charCounter[i] != 0) {
-      printf("Karakteri %c u gjet %d here\n", (char) i, charCounter[i]);
+    mappedIndex = indexMapper[i];
+    if (charCounter[mappedIndex] != 0) {
+      printf("Karakteri %c u gjet %d here\n", (char) mappedIndex, charCounter[mappedIndex]);
     }
   }
   printf("==============\n");

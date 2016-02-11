@@ -58,7 +58,7 @@ void startChildProccess (STARTUPINFO si, PROCESS_INFORMATION pi, int from, int t
     printf("\n\nChild process reading [%d-%d].txt\n", from, to);
     printf("=====================\n");
   }
-  WaitForSingleObject(pi.hProcess, 1000); // Sleep 1 sec before creating another proccess
+  WaitForSingleObject(pi.hProcess, 500); // Sleep 0.5 sec before creating another proccess
   CloseHandle(pi.hProcess);
   CloseHandle(pi.hThread);
 }
